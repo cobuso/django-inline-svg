@@ -55,3 +55,21 @@ class SVGTemplateTagTest(SimpleTestCase):
 
             with self.assertRaises(ImproperlyConfigured):
                 template.render(Context())
+
+    def test_should_respect_SVG_STATIC_SUBDIR(self):
+        with self.settings(SVG_STATIC_SUBDIR='img'):
+            svg_file = open(os.path.join(settings.BASE_DIR,
+                                         'static',
+                                         'img',
+                                         'staticfile.svg')).read()
+            template = Template("{% load svg %}{% svg 'staticfile' %}")
+
+            self.assertEqual(svg_file, template.render(Context()))
+
+    def test_when_SVG_STATIC_SUBDIR_isnt_a_string_it_should_raise_error(self):
+        with self.settings(SVG_STATIC_SUBDIR=12):
+
+            template = Template("{% load svg %}{% svg 'other' %}")
+
+            with self.assertRaises(ImproperlyConfigured):
+                template.render(Context())

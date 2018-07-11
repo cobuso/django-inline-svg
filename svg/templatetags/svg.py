@@ -17,9 +17,13 @@ register = template.Library()
 @register.simple_tag
 def svg(filename):
     SVG_DIRS = getattr(settings, 'SVG_DIRS', [])
+    SVG_STATIC_SUBDIR = getattr(settings, 'SVG_STATIC_SUBDIR', 'svg')
 
     if type(SVG_DIRS) != list:
         raise ImproperlyConfigured('SVG_DIRS setting must be a list')
+
+    if type(SVG_STATIC_SUBDIR) != str:
+        raise ImproperlyConfigured('SVG_STATIC_SUBDIR setting must be a string')
 
     path = None
 
@@ -29,7 +33,7 @@ def svg(filename):
             if os.path.isfile(svg_path):
                 path = svg_path
     else:
-        path = finders.find(os.path.join('svg', '%s.svg' % filename), all=True)
+        path = finders.find(os.path.join(SVG_STATIC_SUBDIR, '%s.svg' % filename), all=True)
 
     if not path:
         message = "SVG '%s.svg' not found" % filename
